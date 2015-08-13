@@ -29,5 +29,6 @@ A simple Android app to browse, view, and stream / download episodes of the Supe
 * Implement streaming / Downloading
   * Streaming is taking the enclosure url and mimetype and feeding it to an ACTION.VIEW intent
   * Downloading is a bit trickier; need to think of the details
+  * Look into broadcasting to a Chromecast
 * Review and clean up code (build your popsicle stick bridge before the Verrazano!)
 * Release on Play
