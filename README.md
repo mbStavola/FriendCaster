@@ -1,9 +1,9 @@
 # FriendCaster
-A simple Android app to browse, view, and stream / download episodes of the Super Best FriendCast.
+A simple Android app to browse, view, and stream / download episodes of the Super Best Friendcast.
 
 ## Features
 * Material design
-* Quickly browse through episodes of the FriendCast
+* Quickly browse through episodes of the Friendcast
 * View detailed info / show notes
 * Stream episodes to your player of choice
 * Download episodes for later
