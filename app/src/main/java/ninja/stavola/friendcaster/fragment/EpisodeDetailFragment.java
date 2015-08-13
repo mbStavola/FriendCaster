@@ -23,4 +23,4 @@ public class EpisodeDetailFragment extends BaseFragment {
     protected int getLayoutId() {
         return 0;
     }
-}g
+}
