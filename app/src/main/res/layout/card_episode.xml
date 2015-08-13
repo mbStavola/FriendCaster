@@ -5,5 +5,18 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
+    <com.rey.material.widget.TextView
+        android:id="@+id/episode_number"
+        />
+    <com.rey.material.widget.TextView
+        android:id="@+id/episode_title"
+        />
 
+    <com.rey.material.widget.TextView
+        android:id="@+id/episode_length"
+        />
+
+    <com.rey.material.widget.TextView
+        android:id="@+id/episode_date"
+        />
 </it.gmariotti.cardslib.library.view.CardView>

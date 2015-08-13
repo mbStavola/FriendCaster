@@ -36,7 +36,7 @@ public class FeedFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        feedList.setAdapter(new FeedAdapter(context, R.layout.card_episode));
+        feedList.setAdapter(new FeedAdapter(context, 0));
         loadFeed();
 
         return view;
@@ -60,6 +60,7 @@ public class FeedFragment extends BaseFragment {
     }
 
     //TODO: This method is DISGUSTING! Refactor it!
+    //TODO: I wonder if we can get entries by "page," would make load times much smaller
     private List<SyndEntry> getEntries() {
         final SyndFeedInput input = new SyndFeedInput();
 

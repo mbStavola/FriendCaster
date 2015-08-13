@@ -18,6 +18,6 @@
     <color name="light_status_navigation_bar">#303f9f</color>
     <color name="light_action_bar">#3f51b5</color>
     <color name="light_background">#ffffff</color>
-    <color name="light_card">#</color>
+    <color name="light_card">#aaaaaa</color>
     <color name="light_accent">#448aff</color>
 </resources>
