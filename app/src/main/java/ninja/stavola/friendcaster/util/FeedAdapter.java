@@ -11,14 +11,22 @@ import com.rey.material.widget.TextView;
 import com.rometools.rome.feed.synd.SyndEnclosure;
 import com.rometools.rome.feed.synd.SyndEntry;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
 import org.joda.time.Seconds;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
+import java.util.TimeZone;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -50,6 +58,7 @@ public class FeedAdapter extends ArrayAdapter<SyndEntry>{
         episodeHolder.episodeNumber.setText(fullTitle[0].split(" ")[1]);
         episodeHolder.episodeTitle.setText(fullTitle[1]);
 
+        episodeHolder.episodeDate.setText(getLocalDateTimeString(syndEntry.getPublishedDate()));
 
         //Get the media file for the entry
         final SyndEnclosure syndEnclosure = syndEntry.getEnclosures().get(0);
@@ -63,7 +72,15 @@ public class FeedAdapter extends ArrayAdapter<SyndEntry>{
         return view;
     }
 
-    //TODO: Actually finish method
+    private String getLocalDateTimeString(Date date) {
+        LocalDateTime localDateTime =
+                new LocalDateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("m/dd/yy");
+
+        return localDateTime.toString(dateTimeFormatter);
+    }
+
     private String getDuration(String urlString) {
         HttpURLConnection conn = null;
         double length = -1;
