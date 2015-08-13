@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="text_color_primary">#ffffff</color>
+    <color name="text_color_secondary">#b3ffffff</color>
+    <color name="text_color_disabled">#4dffffff</color>
+    <color name="text_color_hint">#4dffffff</color>
+
+    <color name="icon_color">#4dffffff</color>
+
+    <!-- Dark Palette -->
+    <color name="dark_status_navigation_bar">#000000</color>
+    <color name="dark_action_bar">#212121</color>
+    <color name="dark_background">#303030</color>
+    <color name="dark_card">#424242</color>
+    <color name="dark_accent">#dd2c00</color>
+
+    <!-- Light Palette -->
+    <color name="light_status_navigation_bar">#303f9f</color>
+    <color name="light_action_bar">#3f51b5</color>
+    <color name="light_background">#ffffff</color>
+    <color name="light_card">#</color>
+    <color name="light_accent">#448aff</color>
+</resources>
