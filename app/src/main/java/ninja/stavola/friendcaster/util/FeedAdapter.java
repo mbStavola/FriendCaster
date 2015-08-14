@@ -54,9 +54,7 @@ public class FeedAdapter extends ArrayAdapter<SyndEntry>{
         final SyndEntry syndEntry = getItem(position);
 
         //Format for the entry title is "SBFC <Episode Number>: <Episode Title>"
-        final String[] fullTitle = syndEntry.getTitle().split(": ");
-        episodeHolder.episodeNumber.setText(fullTitle[0].split(" ")[1]);
-        episodeHolder.episodeTitle.setText(fullTitle[1]);
+        episodeHolder.episodeTitle.setText(syndEntry.getTitle().substring(0, 6));
 
         episodeHolder.episodeDate.setText(getLocalDateTimeString(syndEntry.getPublishedDate()));
 
@@ -124,9 +122,6 @@ public class FeedAdapter extends ArrayAdapter<SyndEntry>{
     }
 
     private static class EpisodeViewHolder {
-        @Bind(R.id.episode_number)
-        public TextView episodeNumber;
-
         @Bind(R.id.episode_title)
         public TextView episodeTitle;
 
