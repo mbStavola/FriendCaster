@@ -16,12 +16,13 @@ import retrofit.Call;
 import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.http.GET;
+import retrofit.http.Query;
 
 public class FeedGetter {
     private FeedGetter() {
         OkHttpClient okHttpClient = new OkHttpClient();
 
-        okHttpClient.setReadTimeout(10, TimeUnit.MINUTES);
+        okHttpClient.setReadTimeout(2, TimeUnit.MINUTES);
 
         String SBFC_URL = "http://superbestfriendsplay.com/";
 
@@ -39,16 +40,16 @@ public class FeedGetter {
     private final SBFCService service;
 
     public interface SBFCService {
-        @GET("/?feed=podcast")
-        Call<Rss> getEpisodes();
+        @GET("/")
+        Call<Rss> getEpisodes(@Query("feed") String feed, @Query("paged") Integer page);
     }
 
-    public List<Item> getEpisodes() {
+    public List<Item> getEpisodes(Integer page) {
         try {
             return new AsyncTask<Integer, Void, List<Item>>() {
                 @Override
                 protected List<Item> doInBackground(Integer... params) {
-                    Call<Rss> call = service.getEpisodes();
+                    Call<Rss> call = service.getEpisodes("podcast", params[0]);
                     Response<Rss>  response = null;
                     try {
                         response = call.execute();
@@ -58,7 +59,7 @@ public class FeedGetter {
                     Rss rss = response.body();
                     return rss.channel.item;
                 }
-            }.execute().get();
+            }.execute(page).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
