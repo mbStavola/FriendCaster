@@ -19,8 +19,8 @@ A simple Android app to browse, view, and stream / download episodes of the Supe
 * Add refresh button to action bar 
 * Properly set up episode card content
   * Issue of what things to get, how to parse them, and where they go
-  * Maybe consider other RSS libraries besides ROME? HorroRss looks good
-  * Need  to come up with a card layout
+  * Retrofit cleaned up the code it a bit, but we need to get it actually working!
+  * Need to come up with a card layout
 * Nice animations for transition to and from EpisodeDetailFragment
   * Right now I'm thinking a simple slide in from the right
     * Maybe rotate in from bottom right? (Seamless does this)
