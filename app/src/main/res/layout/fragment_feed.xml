@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
-    <ListView
+    <com.rey.material.widget.ListView
         android:id="@+id/view_feed_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
 
-    </ListView>
+    </com.rey.material.widget.ListView>
 </LinearLayout>

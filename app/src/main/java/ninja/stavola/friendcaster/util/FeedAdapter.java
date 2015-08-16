@@ -121,7 +121,7 @@ public class FeedAdapter extends ArrayAdapter<SyndEntry>{
         return periodFormatter.print(period.normalizedStandard());
     }
 
-    private static class EpisodeViewHolder {
+    public static class EpisodeViewHolder {
         @Bind(R.id.episode_title)
         public TextView episodeTitle;
 

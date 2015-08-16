@@ -26,7 +26,6 @@ import ninja.stavola.friendcaster.util.FeedAdapter;
 
 public class FeedFragment extends BaseFragment {
     private final String SBFC_URL = "http://superbestfriendsplay.com/?feed=podcast";
-    private final Context context = getActivity().getApplicationContext();
 
     @Bind(R.id.view_feed_list)
     public ListView feedList;
@@ -36,6 +35,7 @@ public class FeedFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
+        final Context context = container.getContext();
         feedList.setAdapter(new FeedAdapter(context, 0));
         loadFeed();
 
