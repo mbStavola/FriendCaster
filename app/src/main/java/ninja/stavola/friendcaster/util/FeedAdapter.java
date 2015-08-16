@@ -61,7 +61,7 @@ public class FeedAdapter extends ArrayAdapter<Item>{
 
         episodeHolder.episodeLength.setText(getDuration(url));
 
-        episodeHolder.episodeSummaryHtml = syndEntry.description;
+        episodeHolder.episodeSummaryHtml = syndEntry.encoded;
 
         return view;
     }
