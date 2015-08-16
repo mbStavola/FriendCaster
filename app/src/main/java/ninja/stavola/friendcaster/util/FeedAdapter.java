@@ -8,17 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.rey.material.widget.TextView;
-import com.rometools.rome.feed.synd.SyndEnclosure;
-import com.rometools.rome.feed.synd.SyndEntry;
 
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
 import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
@@ -32,8 +28,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ninja.stavola.friendcaster.R;
+import ninja.stavola.friendcaster.model.Item;
 
-public class FeedAdapter extends ArrayAdapter<SyndEntry>{
+public class FeedAdapter extends ArrayAdapter<Item>{
     public FeedAdapter(Context context, @LayoutRes int layout) {
         super(context, layout);
     }
@@ -51,21 +48,21 @@ public class FeedAdapter extends ArrayAdapter<SyndEntry>{
             view.setTag(episodeHolder);
         }
 
-        final SyndEntry syndEntry = getItem(position);
+        final Item syndEntry = getItem(position);
 
         //Format for the entry title is "SBFC <Episode Number>: <Episode Title>"
-        episodeHolder.episodeTitle.setText(syndEntry.getTitle().substring(0, 6));
+        episodeHolder.episodeTitle.setText(syndEntry.title.substring(0, 6));
 
-        episodeHolder.episodeDate.setText(getLocalDateTimeString(syndEntry.getPublishedDate()));
+        episodeHolder.episodeDate.setText(getLocalDateTimeString(syndEntry.pubDate));
 
         //Get the media file for the entry
-        final SyndEnclosure syndEnclosure = syndEntry.getEnclosures().get(0);
-        episodeHolder.episodeMediaFileUrl = syndEnclosure.getUrl();
-        episodeHolder.episodeMediaMime = syndEnclosure.getType();
+        String url = syndEntry.enclosure._url;
+        episodeHolder.episodeMediaFileUrl = url;
+        episodeHolder.episodeMediaMime = syndEntry.enclosure._type;
 
-        episodeHolder.episodeLength.setText(getDuration(syndEnclosure.getUrl()));
+        episodeHolder.episodeLength.setText(getDuration(url));
 
-        episodeHolder.episodeSummaryHtml = syndEntry.getContents().get(0).toString();
+        episodeHolder.episodeSummaryHtml = syndEntry.description.__cdata;
 
         return view;
     }
@@ -139,9 +136,9 @@ public class FeedAdapter extends ArrayAdapter<SyndEntry>{
             ButterKnife.bind(this, view);
         }
 
-        //TODO: Bundle important info and open EpisodeDetailFragment
-        @OnClick
-        public void openEpisodeDetailFragment() {
-        }
+//        //TODO: Bundle important info and open EpisodeDetailFragment
+//        @OnClick
+//        public void openEpisodeDetailFragment() {
+//        }
     }
 }
