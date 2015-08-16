@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 
 import com.rey.material.widget.ListView;
 
+import java.util.List;
+
 import butterknife.Bind;
 import ninja.stavola.friendcaster.R;
-import ninja.stavola.friendcaster.model.Item;
+import ninja.stavola.friendcaster.model.Rss.Item;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 import ninja.stavola.friendcaster.util.retrofit.FeedGetter;
 
@@ -40,7 +42,7 @@ public class FeedFragment extends BaseFragment {
     private void loadFeed() {
         final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
 
-        final Item[] entries = FeedGetter.getInstance().getEpisodes();
+        final List<Item> entries = FeedGetter.getInstance().getEpisodes();
 
         for(Item entry : entries) {
             feedAdapter.add(entry);

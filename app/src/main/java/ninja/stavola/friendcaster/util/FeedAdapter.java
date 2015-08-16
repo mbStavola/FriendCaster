@@ -27,7 +27,7 @@ import java.util.TimeZone;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import ninja.stavola.friendcaster.R;
-import ninja.stavola.friendcaster.model.Item;
+import ninja.stavola.friendcaster.model.Rss.Item;
 
 public class FeedAdapter extends ArrayAdapter<Item>{
     public FeedAdapter(Context context, @LayoutRes int layout) {
@@ -52,7 +52,7 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         //Format for the entry title is "SBFC <Episode Number>: <Episode Title>"
         episodeHolder.episodeTitle.setText(syndEntry.title.substring(0, 6));
 
-        episodeHolder.episodeDate.setText(getLocalDateTimeString(syndEntry.pubDate));
+        episodeHolder.episodeDate.setText(getLocalDateTimeString(new Date(syndEntry.pubDate)));
 
         //Get the media file for the entry
         String url = syndEntry.enclosure.url;

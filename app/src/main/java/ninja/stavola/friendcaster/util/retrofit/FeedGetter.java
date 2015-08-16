@@ -2,40 +2,52 @@ package ninja.stavola.friendcaster.util.retrofit;
 
 import android.os.AsyncTask;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import com.squareup.okhttp.OkHttpClient;
 
-import ninja.stavola.friendcaster.model.Item;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 import ninja.stavola.friendcaster.model.Rss;
+import ninja.stavola.friendcaster.model.Rss.Item;
 import retrofit.Call;
 import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.http.GET;
 
 public class FeedGetter {
-    private FeedGetter() {}
+    private FeedGetter() {
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        okHttpClient.setReadTimeout(10, TimeUnit.MINUTES);
+
+        String SBFC_URL = "http://superbestfriendsplay.com/";
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(SBFC_URL)
+                .converterFactory(SimpleXmlConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+
+        service = retrofit.create(SBFCService.class);
+    }
 
     public static FeedGetter INSTANCE;
 
-    private final String SBFC_URL = "http://superbestfriendsplay.com/";
-
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(SBFC_URL)
-            .converterFactory(SimpleXmlConverterFactory.create())
-            .build();
-
-    private final SBFCService service = retrofit.create(SBFCService.class);
+    private final SBFCService service;
 
     public interface SBFCService {
         @GET("/?feed=podcast")
         Call<Rss> getEpisodes();
     }
 
-    public Item[] getEpisodes() {
+    public List<Item> getEpisodes() {
         try {
-            return new AsyncTask<Integer, Void, Item[]>() {
+            return new AsyncTask<Integer, Void, List<Item>>() {
                 @Override
-                protected Item[] doInBackground(Integer... params) {
+                protected List<Item> doInBackground(Integer... params) {
                     Call<Rss> call = service.getEpisodes();
                     Response<Rss>  response = null;
                     try {
@@ -50,7 +62,7 @@ public class FeedGetter {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        return new Item[0];
+        return Collections.emptyList();
     }
 
     public static FeedGetter getInstance() {
