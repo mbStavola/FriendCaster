@@ -26,7 +26,6 @@ import java.util.TimeZone;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.model.Item;
 
@@ -56,13 +55,13 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         episodeHolder.episodeDate.setText(getLocalDateTimeString(syndEntry.pubDate));
 
         //Get the media file for the entry
-        String url = syndEntry.enclosure._url;
+        String url = syndEntry.enclosure.url;
         episodeHolder.episodeMediaFileUrl = url;
-        episodeHolder.episodeMediaMime = syndEntry.enclosure._type;
+        episodeHolder.episodeMediaMime = syndEntry.enclosure.type;
 
         episodeHolder.episodeLength.setText(getDuration(url));
 
-        episodeHolder.episodeSummaryHtml = syndEntry.description.__cdata;
+        episodeHolder.episodeSummaryHtml = syndEntry.description;
 
         return view;
     }

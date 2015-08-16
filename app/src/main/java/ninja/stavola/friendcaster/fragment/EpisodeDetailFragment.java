@@ -1,10 +1,5 @@
 package ninja.stavola.friendcaster.fragment;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.view.View;
-import android.view.View.OnClickListener;
-
 //TODO: Everything about this
 public class EpisodeDetailFragment extends BaseFragment {
     //Saving this here for later, will eventually be how we stream

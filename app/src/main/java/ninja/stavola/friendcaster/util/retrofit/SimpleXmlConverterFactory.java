@@ -15,9 +15,10 @@
  */
 package ninja.stavola.friendcaster.util.retrofit;
 
-import java.lang.reflect.Type;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
+
+import java.lang.reflect.Type;
 
 import retrofit.Converter;
 

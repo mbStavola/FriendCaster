@@ -3,18 +3,15 @@ package ninja.stavola.friendcaster.model;
 import java.util.Date;
 
 public class Item {
-    public String title;
+    public Guid guid;
+
     public Date pubDate;
 
-    public Encoded description;
+    public String title;
+
     public Enclosure enclosure;
 
-    public static class Encoded {
-        public String __cdata;
-    }
+    public String description;
 
-    public static class Enclosure {
-        public String _url;
-        public String _type;
-    }
+    public String link;
 }
