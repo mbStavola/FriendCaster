@@ -1,13 +1,8 @@
 package ninja.stavola.friendcaster.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-
-import com.rey.material.widget.ListView;
+import android.widget.ListView;
 
 import java.util.List;
 
@@ -22,23 +17,19 @@ public class FeedFragment extends BaseFragment {
     @Bind(R.id.view_feed_list)
     public ListView feedList;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        final Context context = container.getContext();
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        feedList.setAdapter(new FeedAdapter(context, 0));
+        feedList.setAdapter(new FeedAdapter(getActivity(), 0));
         feedList.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                loadFeed(page);
+                //loadFeed(page);
             }
         });
 
         loadFeed();
-
-        return view;
     }
 
     @Override

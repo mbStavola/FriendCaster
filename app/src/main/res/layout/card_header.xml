@@ -12,21 +12,4 @@
          You can customize it with your layout xml file and your CardHeader.
          You can popolate your element with CardHeader#setupInnerViewElements() method -->
 
-    <com.rey.material.widget.TextView
-        android:id="@+id/episode_title"
-
-        tools:text="001: This is Gonna be Terrible"
-
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-
-        android:layout_marginLeft="0dp"
-        android:paddingLeft="10dp"
-
-        android:textSize="20sp"
-        android:textColor="@color/text_color_primary"
-
-        android:background="@color/dark_accent"
-        />
 </LinearLayout>

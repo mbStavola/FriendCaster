@@ -1,13 +1,14 @@
 package ninja.stavola.friendcaster.util;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.WorkerThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-
-import com.rey.material.widget.TextView;
+import android.widget.TextView;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
@@ -37,7 +38,7 @@ public class FeedAdapter extends ArrayAdapter<Item>{
     //TODO: Actually set up the episode card
     @Override
     public View getView(int position, View view, ViewGroup parent) {
-        EpisodeViewHolder episodeHolder;
+        final EpisodeViewHolder episodeHolder;
 
         if (view != null) {
             episodeHolder = (EpisodeViewHolder) view.getTag();
@@ -50,7 +51,7 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         final Item syndEntry = getItem(position);
 
         //Format for the entry title is "SBFC <Episode Number>: <Episode Title>"
-        episodeHolder.episodeTitle.setText(syndEntry.title.substring(0, 6));
+        episodeHolder.episodeTitle.setText(syndEntry.title.substring(5));
 
         episodeHolder.episodeDate.setText(getLocalDateTimeString(new Date(syndEntry.pubDate)));
 
@@ -59,7 +60,17 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         episodeHolder.episodeMediaFileUrl = url;
         episodeHolder.episodeMediaMime = syndEntry.enclosure.type;
 
-        episodeHolder.episodeLength.setText(getDuration(url));
+        new AsyncTask<String, Void, String>() {
+            @Override
+            protected String doInBackground(String... params) {
+                return getDuration(params[0]);
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                episodeHolder.episodeLength.setText(s);
+            }
+        }.execute(syndEntry.enclosure.url);
 
         episodeHolder.episodeSummaryHtml = syndEntry.encoded;
 
@@ -70,11 +81,12 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         LocalDateTime localDateTime =
                 new LocalDateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("m/dd/yy");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("M/dd/yy");
 
         return localDateTime.toString(dateTimeFormatter);
     }
 
+    @WorkerThread
     private String getDuration(String urlString) {
         HttpURLConnection conn = null;
         double length = -1;
@@ -107,6 +119,8 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         Period period = new Period(Seconds.seconds(roundedLengthInSeconds));
 
         PeriodFormatter periodFormatter = new PeriodFormatterBuilder()
+                .printZeroAlways()
+                .minimumPrintedDigits(2)
                 .appendHours()
                 .appendSeparator(":")
                 .appendMinutes()
@@ -134,10 +148,5 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         public EpisodeViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
-
-//        //TODO: Bundle important info and open EpisodeDetailFragment
-//        @OnClick
-//        public void openEpisodeDetailFragment() {
-//        }
     }
 }

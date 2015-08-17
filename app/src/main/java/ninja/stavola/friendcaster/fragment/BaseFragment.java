@@ -33,11 +33,12 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        container.removeAllViews();
-        View view = inflater.inflate(R.layout.fragment_feed, container, false);
+        return inflater.inflate(getLayoutId(), container, false);
+    }
 
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
