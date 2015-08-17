@@ -16,13 +16,12 @@ A simple Android app to browse, view, and stream / download episodes of the Supe
   * Everything needs to compliment and flow
   * REALLY read the material design guidelines
 * Set up linear progress bar when fetching feed
-* Add refresh button to action bar 
-* Properly set up episode card content
-  * Need to come up with a card layout
-  * Figure out expandable cards
-* Implement streaming / Downloading
-  * Streaming is taking the enclosure url and mimetype and feeding it to an ACTION.VIEW intent
-  * Downloading is a bit trickier; need to think of the details
+  * If they properly paginate, maybe we'll be fast enough to not need this...
+* Add refresh button to action bar
+  * Maybe we should do a pull-to-refresh?
+* Figure out slide-to-buttons for episode cards
+* Implement downloading / broadcasting
+  * Look into downloading
   * Look into broadcasting to a Chromecast
 * Review and clean up code (build your popsicle stick bridge before the Verrazano!)
 * Release on Play
