@@ -1,6 +1,8 @@
 package ninja.stavola.friendcaster.util;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.WorkerThread;
@@ -25,14 +27,19 @@ import java.net.URL;
 import java.util.Date;
 import java.util.TimeZone;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.Bind;
+import butterknife.OnClick;
+
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.model.Rss.Item;
 
 public class FeedAdapter extends ArrayAdapter<Item>{
+    private Context context;
+
     public FeedAdapter(Context context, @LayoutRes int layout) {
         super(context, layout);
+        this.context = context;
     }
 
     //TODO: Actually set up the episode card
@@ -44,7 +51,7 @@ public class FeedAdapter extends ArrayAdapter<Item>{
             episodeHolder = (EpisodeViewHolder) view.getTag();
         } else {
             view = LayoutInflater.from(getContext()).inflate(R.layout.card_episode, parent, false);
-            episodeHolder = new EpisodeViewHolder(view);
+            episodeHolder = new EpisodeViewHolder(context, view);
             view.setTag(episodeHolder);
         }
 
@@ -145,7 +152,19 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         public String episodeMediaMime;
         public String episodeSummaryHtml;
 
-        public EpisodeViewHolder(View view) {
+        private Context context;
+
+        @OnClick(R.id.episode_card)
+        public void onCardClick() {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse(episodeMediaFileUrl), episodeMediaMime);
+            context.startActivity(intent);
+        }
+
+        public EpisodeViewHolder(Context context, View view) {
+            this.context = context;
+
             ButterKnife.bind(this, view);
         }
     }

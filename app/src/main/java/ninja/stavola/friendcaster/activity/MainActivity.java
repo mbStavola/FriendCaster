@@ -5,12 +5,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.fragment.FeedFragment;
 
 public class MainActivity extends AppCompatActivity {
-
     //TODO: Implement theme switching
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        String currentFragment = getFragmentManager()
-                .getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1).getName();
-
-        if (!currentFragment.equals("fragment_feed")) {
+        if (getFragmentManager().getBackStackEntryCount() == 1) {
+            finish();
+        } else {
             getFragmentManager().popBackStack();
         }
     }
