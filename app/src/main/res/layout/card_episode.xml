@@ -8,13 +8,13 @@
     android:layout_height="wrap_content"
     custom:cardElevation="0dp"
     custom:contentPadding="0dp"
-
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <TextView
             android:id="@+id/episode_title"
@@ -29,14 +29,15 @@
 
             android:textColor="@color/text_color_primary"
             android:textSize="20sp"
-
-            tools:text="001: This is Gonna be Terrible" />
+            tools:text="001: This is Gonna be Terrible"
+            />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -48,13 +49,13 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    >
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Duration: "
-
                         />
 
                     <TextView
@@ -62,7 +63,10 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="1:11:01" />
+
+                        android:text="Loading"
+                        tools:text="1:11:01"
+                        />
                 </LinearLayout>
 
                 <LinearLayout
@@ -73,13 +77,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Date: "/>
+                        android:text="Date: "
+                        />
                     <TextView
                         android:id="@+id/episode_date"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="3/10/2014" />
+                        tools:text="3/10/2014"
+                        />
                 </LinearLayout>
             </LinearLayout>
         </FrameLayout>

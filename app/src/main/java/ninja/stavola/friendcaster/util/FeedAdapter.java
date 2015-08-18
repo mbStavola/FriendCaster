@@ -55,31 +55,36 @@ public class FeedAdapter extends ArrayAdapter<Item>{
             view.setTag(episodeHolder);
         }
 
-        final Item syndEntry = getItem(position);
+        final Item item = getItem(position);
 
         //Format for the entry title is "SBFC <Episode Number>: <Episode Title>"
-        episodeHolder.episodeTitle.setText(syndEntry.title.substring(5));
+        episodeHolder.episodeTitle.setText(item.title.substring(5));
 
-        episodeHolder.episodeDate.setText(getLocalDateTimeString(new Date(syndEntry.pubDate)));
+        episodeHolder.episodeDate.setText(getLocalDateTimeString(new Date(item.pubDate)));
 
         //Get the media file for the entry
-        String url = syndEntry.enclosure.url;
+        String url = item.enclosure.url;
         episodeHolder.episodeMediaFileUrl = url;
-        episodeHolder.episodeMediaMime = syndEntry.enclosure.type;
+        episodeHolder.episodeMediaMime = item.enclosure.type;
 
-        new AsyncTask<String, Void, String>() {
-            @Override
-            protected String doInBackground(String... params) {
-                return getDuration(params[0]);
-            }
+        //Since there is no duration returned by the RSS, we populate a holder in the model
+        //(with our own calculated duration) so we don't have to ever recalculate!
+        if(item.durationHolder == null) {
+            new AsyncTask<String, Void, String>() {
+                @Override
+                protected String doInBackground(String... params) {
+                    return getDuration(params[0]);
+                }
 
-            @Override
-            protected void onPostExecute(String s) {
-                episodeHolder.episodeLength.setText(s);
-            }
-        }.execute(syndEntry.enclosure.url);
+                @Override
+                protected void onPostExecute(String s) {
+                    item.durationHolder = s;
+                }
+            }.execute(url);
+        }
 
-        episodeHolder.episodeSummaryHtml = syndEntry.encoded;
+        episodeHolder.episodeLength.setText(item.durationHolder);
+        episodeHolder.episodeSummaryHtml = item.encoded;
 
         return view;
     }

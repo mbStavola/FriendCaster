@@ -31,6 +31,9 @@ public class Rss {
 
         @Element(name="enclosure", required = true)
         public Enclosure enclosure;
+
+        //NOT part of the RSS! We need this to make sure we don't recalculate duration!
+        public String durationHolder;
     }
 
     @Root(name = "enclosure", strict = false)
