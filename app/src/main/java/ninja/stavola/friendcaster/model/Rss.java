@@ -20,14 +20,14 @@ public class Rss {
 
     @Root(name = "item", strict = false)
     public static class Item {
+        @Element(name="link", required = false)
+        public String link;
+
         @Element(name="title", required = true)
         public String title;
 
         @Element(name="pubDate", required = false)
         public String pubDate;
-
-        @Element(name="encoded", required = false)
-        public String encoded;
 
         @Element(name="enclosure", required = true)
         public Enclosure enclosure;

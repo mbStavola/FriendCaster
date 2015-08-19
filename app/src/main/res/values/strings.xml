@@ -3,4 +3,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="button_text_stream">Stream in Player</string>
+    <string name="button_text_download">Download to Device</string>
+    <string name="button_text_cast">Cast to Device</string>
+    <string name="button_text_browser">Open in Browser</string>
 </resources>

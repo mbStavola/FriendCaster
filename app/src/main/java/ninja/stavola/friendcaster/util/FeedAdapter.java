@@ -1,15 +1,18 @@
 package ninja.stavola.friendcaster.util;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.WorkerThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.joda.time.DateTimeZone;
@@ -30,6 +33,8 @@ import java.util.TimeZone;
 import butterknife.ButterKnife;
 import butterknife.Bind;
 import butterknife.OnClick;
+
+import com.rey.material.app.BottomSheetDialog;
 
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.model.Rss.Item;
@@ -59,6 +64,7 @@ public class FeedAdapter extends ArrayAdapter<Item>{
 
         //Format for the entry title is "SBFC <Episode Number>: <Episode Title>"
         episodeHolder.episodeTitle.setText(item.title.substring(5));
+        episodeHolder.fileName = item.title.substring(0, item.title.indexOf(':')).replace(" ", "_") + ".mp3";
 
         episodeHolder.episodeDate.setText(getLocalDateTimeString(new Date(item.pubDate)));
 
@@ -79,12 +85,14 @@ public class FeedAdapter extends ArrayAdapter<Item>{
                 @Override
                 protected void onPostExecute(String s) {
                     item.durationHolder = s;
+                    episodeHolder.episodeLength.setText(s);
                 }
             }.execute(url);
+        } else {
+            episodeHolder.episodeLength.setText(item.durationHolder);
         }
 
-        episodeHolder.episodeLength.setText(item.durationHolder);
-        episodeHolder.episodeSummaryHtml = item.encoded;
+        episodeHolder.linkToEpisode = item.link;
 
         return view;
     }
@@ -121,9 +129,9 @@ public class FeedAdapter extends ArrayAdapter<Item>{
             return "Unknown";
         }
 
-        //We do (length / 1024) * 8 to get length in Kib and then divide by the bitrate (128)
-        //So why not shorten it to (length / 16384)?
-        double lengthInSeconds = length / 16384;
+        //We do (length / 1024) * 8 to get length in Kib and then divide by the bitrate (64)
+        //So why not shorten it to (length / 8192)?
+        double lengthInSeconds = length / 8192;
 
         //Round up and cast to int
         int roundedLengthInSeconds = (int) (lengthInSeconds + 0.5);
@@ -155,22 +163,73 @@ public class FeedAdapter extends ArrayAdapter<Item>{
 
         public String episodeMediaFileUrl;
         public String episodeMediaMime;
-        public String episodeSummaryHtml;
+
+        public String fileName;
+
+        public String linkToEpisode;
 
         private Context context;
-
-        @OnClick(R.id.episode_card)
-        public void onCardClick() {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.parse(episodeMediaFileUrl), episodeMediaMime);
-            context.startActivity(intent);
-        }
 
         public EpisodeViewHolder(Context context, View view) {
             this.context = context;
 
             ButterKnife.bind(this, view);
+        }
+
+        @OnClick(R.id.episode_card)
+        public void showBottomSheet() {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.Material_App_BottomSheetDialog);
+
+            View bottomSheetView = LayoutInflater.from(context).inflate(R.layout.view_bottom_sheet, null);
+
+            setOnClickForBottomSheetButton(bottomSheetView, R.id.button_stream, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(episodeMediaFileUrl), episodeMediaMime);
+                    context.startActivity(intent);
+                }
+            });
+
+            setOnClickForBottomSheetButton(bottomSheetView, R.id.button_download, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(episodeMediaFileUrl));
+
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                    request.allowScanningByMediaScanner();
+
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+                    DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                    downloadManager.enqueue(request);
+                }
+            });
+
+            setOnClickForBottomSheetButton(bottomSheetView, R.id.button_cast, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            setOnClickForBottomSheetButton(bottomSheetView, R.id.button_browser, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(linkToEpisode));
+                    context.startActivity(intent);
+                }
+            });
+
+            bottomSheetDialog.contentView(bottomSheetView).show();
+        }
+
+        private void setOnClickForBottomSheetButton(View bottomSheetView, int buttonId, View.OnClickListener onClickListener) {
+            LinearLayout button = (LinearLayout) bottomSheetView.findViewById(buttonId);
+            button.setOnClickListener(onClickListener);
         }
     }
 }

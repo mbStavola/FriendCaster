@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/dark_background"
+    android:padding="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <ninja.stavola.friendcaster.view.BottomSheetButtonView
+        android:id="@+id/button_stream"
+        style="@style/BottomSheetButtonStyle"
+        custom:text="@string/button_text_stream"
+        custom:image="@drawable/ic_play_arrow_white_24dp"
+        />
+
+    <ninja.stavola.friendcaster.view.BottomSheetButtonView
+        android:id="@+id/button_download"
+        style="@style/BottomSheetButtonStyle"
+        custom:text="@string/button_text_download"
+        custom:image="@drawable/ic_file_download_white_24dp"
+        />
+
+    <ninja.stavola.friendcaster.view.BottomSheetButtonView
+        android:id="@+id/button_cast"
+        style="@style/BottomSheetButtonStyle"
+        custom:text="@string/button_text_cast"
+        custom:image="@drawable/ic_cast_white_24dp"
+        />
+
+    <ninja.stavola.friendcaster.view.BottomSheetButtonView
+        android:id="@+id/button_browser"
+        style="@style/BottomSheetButtonStyle"
+        custom:text="@string/button_text_browser"
+        custom:image="@drawable/ic_open_in_browser_white_24dp"
+        />
+</LinearLayout>
