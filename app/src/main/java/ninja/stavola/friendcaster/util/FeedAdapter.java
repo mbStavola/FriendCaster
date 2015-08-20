@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rey.material.app.BottomSheetDialog;
+
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
@@ -30,12 +32,9 @@ import java.net.URL;
 import java.util.Date;
 import java.util.TimeZone;
 
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import com.rey.material.app.BottomSheetDialog;
-
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.model.Rss.Item;
 
@@ -210,7 +209,7 @@ public class FeedAdapter extends ArrayAdapter<Item>{
             setOnClickForBottomSheetButton(bottomSheetView, R.id.button_cast, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    //TODO: Actually cast to a device
                 }
             });
 

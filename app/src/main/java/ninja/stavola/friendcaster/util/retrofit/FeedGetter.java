@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.model.Rss.Item;
+import ninja.stavola.friendcaster.util.FeedAdapter;
 import retrofit.Call;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -44,26 +45,27 @@ public class FeedGetter {
         Call<Rss> getEpisodes(@Query("feed") String feed, @Query("paged") Integer page);
     }
 
-    public List<Item> getEpisodes(Integer page) {
-        try {
-            return new AsyncTask<Integer, Void, List<Item>>() {
-                @Override
-                protected List<Item> doInBackground(Integer... params) {
-                    Call<Rss> call = service.getEpisodes("podcast", params[0]);
-                    Response<Rss>  response = null;
-                    try {
-                        response = call.execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Rss rss = response.body();
-                    return rss.channel.item;
+    public void fetchEpisodes(final FeedAdapter intoAdapter, Integer page) {
+        new AsyncTask<Integer, Void, List<Item>>() {
+            @Override
+            protected List<Item> doInBackground(Integer... params) {
+                Call<Rss> call = service.getEpisodes("podcast", params[0]);
+                Response<Rss>  response = null;
+                try {
+                    response = call.execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }.execute(page).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return Collections.emptyList();
+                Rss rss = response.body();
+                return rss.channel.item;
+            }
+
+            @Override
+            protected void onPostExecute(List<Item> items) {
+                intoAdapter.addAll(items);
+                intoAdapter.notifyDataSetChanged();
+            }
+        }.execute(page);
     }
 
     public static FeedGetter getInstance() {

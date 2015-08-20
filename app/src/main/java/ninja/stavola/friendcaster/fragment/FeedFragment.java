@@ -1,14 +1,14 @@
 package ninja.stavola.friendcaster.fragment;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-import java.util.List;
-
 import butterknife.Bind;
 import ninja.stavola.friendcaster.R;
-import ninja.stavola.friendcaster.model.Rss.Item;
 import ninja.stavola.friendcaster.util.EndlessScrollListener;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 import ninja.stavola.friendcaster.util.retrofit.FeedGetter;
@@ -18,6 +18,12 @@ public class FeedFragment extends BaseFragment {
     public ListView feedList;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -25,11 +31,23 @@ public class FeedFragment extends BaseFragment {
         feedList.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                //loadFeed(page);
+                loadFeed(page);
             }
         });
 
         loadFeed();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        loadFeed();
+        return true;
     }
 
     @Override
@@ -44,12 +62,6 @@ public class FeedFragment extends BaseFragment {
     private void loadFeed(Integer page) {
         final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
 
-        final List<Item> entries = FeedGetter.getInstance().getEpisodes(page);
-
-        for(Item entry : entries) {
-            feedAdapter.add(entry);
-        }
-
-        feedAdapter.notifyDataSetChanged();
+        FeedGetter.getInstance().fetchEpisodes(feedAdapter, page);
     }
 }

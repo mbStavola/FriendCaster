@@ -8,11 +8,11 @@
     <color name="icon_color">#4dffffff</color>
 
     <!-- Dark Palette -->
-    <color name="dark_status_navigation_bar">#000000</color>
+    <color name="dark_status_bar">#0091ea</color>
     <color name="dark_action_bar">#212121</color>
     <color name="dark_background">#303030</color>
     <color name="dark_card">#424242</color>
-    <color name="dark_accent">#dd2c00</color>
+    <color name="dark_accent">#00b0ff</color>
 
     <!-- Light Palette -->
     <color name="light_status_navigation_bar">#303f9f</color>

@@ -5,7 +5,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.fragment.FeedFragment;
@@ -17,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        setColorTheme(R.color.dark_action_bar, R.color.dark_status_navigation_bar);
+        setColorTheme(R.color.dark_accent, R.color.dark_status_bar);
 
         openFeedFragment();
     }
@@ -38,16 +39,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setColorTheme(@ColorRes int actionBarColorId, @ColorRes int statusAndNavigationBarColorId) {
+    public void setColorTheme(@ColorRes int actionBarColorId, @ColorRes int statusBarColorId) {
         final int actionBarColor = getResources().getColor(actionBarColorId);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(actionBarColor));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final int statusAndNavigationBarColor =
-                    getResources().getColor(statusAndNavigationBarColorId);
+            final int statusBarColor =
+                    getResources().getColor(statusBarColorId);
 
-            getWindow().setStatusBarColor(statusAndNavigationBarColor);
-            getWindow().setNavigationBarColor(statusAndNavigationBarColor);
+            getWindow().setStatusBarColor(statusBarColor);
         }
     }
 }

@@ -7,4 +7,5 @@
     <string name="button_text_download">Download to Device</string>
     <string name="button_text_cast">Cast to Device</string>
     <string name="button_text_browser">Open in Browser</string>
+    <string name="action_refresh">Refresh</string>
 </resources>
