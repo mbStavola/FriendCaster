@@ -19,12 +19,14 @@
             android:id="@+id/episode_title"
 
             android:layout_width="match_parent"
-
             android:layout_height="48dp"
+
             android:background="@color/dark_accent"
 
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
+
+            android:singleLine="false"
 
             android:textColor="@color/text_color_primary"
             android:textSize="20sp"

@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rey.material.app.BottomSheetDialog;
@@ -37,8 +36,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.model.Rss.Item;
+import ninja.stavola.friendcaster.view.BottomSheetButtonView;
 
-public class FeedAdapter extends ArrayAdapter<Item>{
+public class FeedAdapter extends ArrayAdapter<Item> {
     private Context context;
 
     public FeedAdapter(Context context, @LayoutRes int layout) {
@@ -178,20 +178,21 @@ public class FeedAdapter extends ArrayAdapter<Item>{
         @OnClick(R.id.episode_card)
         public void showBottomSheet() {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.Material_App_BottomSheetDialog);
-
             View bottomSheetView = LayoutInflater.from(context).inflate(R.layout.view_bottom_sheet, null);
+            BottomSheetViewHolder bottomSheetViewHolder = new BottomSheetViewHolder(bottomSheetView);
 
-            setOnClickForBottomSheetButton(bottomSheetView, R.id.button_stream, new View.OnClickListener() {
+            final Intent intent = new Intent();
+
+            bottomSheetViewHolder.buttonStream.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.parse(episodeMediaFileUrl), episodeMediaMime);
                     context.startActivity(intent);
                 }
             });
 
-            setOnClickForBottomSheetButton(bottomSheetView, R.id.button_download, new View.OnClickListener() {
+            bottomSheetViewHolder.buttonDownload.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(episodeMediaFileUrl));
@@ -206,17 +207,16 @@ public class FeedAdapter extends ArrayAdapter<Item>{
                 }
             });
 
-            setOnClickForBottomSheetButton(bottomSheetView, R.id.button_cast, new View.OnClickListener() {
+            bottomSheetViewHolder.buttonCast.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //TODO: Actually cast to a device
                 }
             });
 
-            setOnClickForBottomSheetButton(bottomSheetView, R.id.button_browser, new View.OnClickListener() {
+            bottomSheetViewHolder.buttonBrowser.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse(linkToEpisode));
                     context.startActivity(intent);
@@ -226,9 +226,22 @@ public class FeedAdapter extends ArrayAdapter<Item>{
             bottomSheetDialog.contentView(bottomSheetView).show();
         }
 
-        private void setOnClickForBottomSheetButton(View bottomSheetView, int buttonId, View.OnClickListener onClickListener) {
-            LinearLayout button = (LinearLayout) bottomSheetView.findViewById(buttonId);
-            button.setOnClickListener(onClickListener);
+        public static class BottomSheetViewHolder {
+            @Bind(R.id.button_stream)
+            BottomSheetButtonView buttonStream;
+
+            @Bind(R.id.button_download)
+            BottomSheetButtonView buttonDownload;
+
+            @Bind(R.id.button_cast)
+            BottomSheetButtonView buttonCast;
+
+            @Bind(R.id.button_browser)
+            BottomSheetButtonView buttonBrowser;
+
+            BottomSheetViewHolder(View view) {
+                ButterKnife.bind(this, view);
+            }
         }
     }
 }

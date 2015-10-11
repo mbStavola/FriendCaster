@@ -5,8 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
 
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.fragment.FeedFragment;

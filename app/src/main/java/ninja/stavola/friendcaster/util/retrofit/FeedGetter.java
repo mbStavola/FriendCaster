@@ -5,9 +5,7 @@ import android.os.AsyncTask;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import ninja.stavola.friendcaster.model.Rss;
@@ -16,10 +14,14 @@ import ninja.stavola.friendcaster.util.FeedAdapter;
 import retrofit.Call;
 import retrofit.Response;
 import retrofit.Retrofit;
+import retrofit.SimpleXmlConverterFactory;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
 public class FeedGetter {
+//    @Bind(R.id.progress_bar)
+//    public ProgressBar progressView;
+
     private FeedGetter() {
         OkHttpClient okHttpClient = new OkHttpClient();
 
@@ -29,7 +31,7 @@ public class FeedGetter {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(SBFC_URL)
-                .converterFactory(SimpleXmlConverterFactory.create())
+                .addConverterFactory(SimpleXmlConverterFactory.create())
                 .client(okHttpClient)
                 .build();
 
@@ -46,6 +48,8 @@ public class FeedGetter {
     }
 
     public void fetchEpisodes(final FeedAdapter intoAdapter, Integer page) {
+        //progressView.setVisibility(View.VISIBLE);
+
         new AsyncTask<Integer, Void, List<Item>>() {
             @Override
             protected List<Item> doInBackground(Integer... params) {
@@ -64,6 +68,8 @@ public class FeedGetter {
             protected void onPostExecute(List<Item> items) {
                 intoAdapter.addAll(items);
                 intoAdapter.notifyDataSetChanged();
+
+                //progressView.setVisibility(View.GONE);
             }
         }.execute(page);
     }
