@@ -1,4 +1,4 @@
-package ninja.stavola.friendcaster.util.retrofit;
+package ninja.stavola.friendcaster.retrofit;
 
 import android.os.AsyncTask;
 

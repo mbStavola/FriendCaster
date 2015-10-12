@@ -18,7 +18,7 @@ import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.util.DurationUtil;
 import ninja.stavola.friendcaster.util.EndlessScrollListener;
 import ninja.stavola.friendcaster.util.FeedAdapter;
-import ninja.stavola.friendcaster.util.retrofit.PodcastAPI;
+import ninja.stavola.friendcaster.retrofit.PodcastAPI;
 
 public class FeedFragment extends BaseFragment {
     private PodcastAPI podcastAPI;

@@ -6,7 +6,7 @@ import com.squareup.otto.Bus;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import ninja.stavola.friendcaster.util.retrofit.PodcastAPI;
+import ninja.stavola.friendcaster.retrofit.PodcastAPI;
 
 @Singleton
 @Component(modules = { FriendCasterModule.class })
