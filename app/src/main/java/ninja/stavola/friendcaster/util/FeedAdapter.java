@@ -4,10 +4,8 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.WorkerThread;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +16,9 @@ import com.rey.material.app.BottomSheetDialog;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
-import org.joda.time.Period;
-import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -68,28 +59,17 @@ public class FeedAdapter extends ArrayAdapter<Item> {
         episodeHolder.episodeDate.setText(getLocalDateTimeString(new Date(item.pubDate)));
 
         //Get the media file for the entry
-        String url = item.enclosure.url;
-        episodeHolder.episodeMediaFileUrl = url;
+        episodeHolder.episodeMediaFileUrl = item.enclosure.url;
         episodeHolder.episodeMediaMime = item.enclosure.type;
 
-        //Since there is no duration returned by the RSS, we populate a holder in the model
-        //(with our own calculated duration) so we don't have to ever recalculate!
+        final String durationString;
         if(item.durationHolder == null) {
-            new AsyncTask<String, Void, String>() {
-                @Override
-                protected String doInBackground(String... params) {
-                    return getDuration(params[0]);
-                }
-
-                @Override
-                protected void onPostExecute(String s) {
-                    item.durationHolder = s;
-                    episodeHolder.episodeLength.setText(s);
-                }
-            }.execute(url);
+            durationString = "Loading...";
         } else {
-            episodeHolder.episodeLength.setText(item.durationHolder);
+            durationString = item.durationHolder;
         }
+
+        episodeHolder.episodeLength.setText(durationString);
 
         episodeHolder.linkToEpisode = item.link;
 
@@ -103,51 +83,6 @@ public class FeedAdapter extends ArrayAdapter<Item> {
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("M/dd/yy");
 
         return localDateTime.toString(dateTimeFormatter);
-    }
-
-    @WorkerThread
-    private String getDuration(String urlString) {
-        HttpURLConnection conn = null;
-        double length = -1;
-
-        //We connect to the file real quick to get the file size in bytes from the content-header
-        try {
-            URL url = new URL(urlString);
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("HEAD");
-            conn.getInputStream();
-            length = conn.getContentLength();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            conn.disconnect();
-        }
-
-        //Something icky happened, we don't know the duration!
-        if(length == -1) {
-            return "Unknown";
-        }
-
-        //We do (length / 1024) * 8 to get length in Kib and then divide by the bitrate (64)
-        //So why not shorten it to (length / 8192)?
-        double lengthInSeconds = length / 8192;
-
-        //Round up and cast to int
-        int roundedLengthInSeconds = (int) (lengthInSeconds + 0.5);
-
-        Period period = new Period(Seconds.seconds(roundedLengthInSeconds));
-
-        PeriodFormatter periodFormatter = new PeriodFormatterBuilder()
-                .printZeroAlways()
-                .minimumPrintedDigits(2)
-                .appendHours()
-                .appendSeparator(":")
-                .appendMinutes()
-                .appendSeparator(":")
-                .appendSeconds()
-                .toFormatter();
-
-        return periodFormatter.print(period.normalizedStandard());
     }
 
     public static class EpisodeViewHolder {

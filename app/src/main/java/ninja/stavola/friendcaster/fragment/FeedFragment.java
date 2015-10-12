@@ -1,5 +1,6 @@
 package ninja.stavola.friendcaster.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,6 +10,8 @@ import android.widget.ListView;
 
 import butterknife.Bind;
 import ninja.stavola.friendcaster.R;
+import ninja.stavola.friendcaster.model.Rss;
+import ninja.stavola.friendcaster.util.DurationUtil;
 import ninja.stavola.friendcaster.util.EndlessScrollListener;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 import ninja.stavola.friendcaster.util.retrofit.FeedGetter;
@@ -31,6 +34,7 @@ public class FeedFragment extends BaseFragment {
         feedList.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
+                //TODO: Page 2 produces and NPE (because they have no pagination!)
                 loadFeed(page);
             }
         });
@@ -63,5 +67,18 @@ public class FeedFragment extends BaseFragment {
         final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
 
         FeedGetter.getInstance().fetchEpisodes(feedAdapter, page);
+
+        //Since there is no duration returned by the RSS, we populate a holder in the model
+        //(with our own calculated duration) so we don't have to ever recalculate!
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                for (int i = 0; i < feedAdapter.getCount(); i++) {
+                    Rss.Item item = feedAdapter.getItem(i);
+                    item.durationHolder = DurationUtil.getDuration(item.enclosure.url);
+                }
+                return null;
+            }
+        }.execute();
     }
 }

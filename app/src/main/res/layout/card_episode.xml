@@ -9,7 +9,6 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,12 +18,12 @@
             android:id="@+id/episode_title"
 
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
 
             android:background="@color/dark_accent"
 
             android:gravity="center_vertical"
-            android:paddingLeft="10dp"
+            android:padding="10dp"
 
             android:singleLine="false"
 
@@ -58,7 +57,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/text_color_primary"
-                        android:text="Duration: "
+                        android:text="@string/label_duration"
                         />
 
                     <TextView
@@ -81,7 +80,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/text_color_primary"
-                        android:text="Date: "
+                        android:text="@string/label_date"
                         />
                     <TextView
                         android:id="@+id/episode_date"

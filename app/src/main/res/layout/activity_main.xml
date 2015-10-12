@@ -2,8 +2,6 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context=".MainActivity"
     android:background="@color/dark_background"
     xmlns:android="http://schemas.android.com/apk/res/android"
