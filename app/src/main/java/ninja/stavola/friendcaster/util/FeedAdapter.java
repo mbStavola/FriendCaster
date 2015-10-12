@@ -37,7 +37,6 @@ public class FeedAdapter extends ArrayAdapter<Item> {
         this.context = context;
     }
 
-    //TODO: Actually set up the episode card
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         final EpisodeViewHolder episodeHolder;

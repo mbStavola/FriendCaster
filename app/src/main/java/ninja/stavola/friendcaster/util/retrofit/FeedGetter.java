@@ -3,13 +3,16 @@ package ninja.stavola.friendcaster.util.retrofit;
 import android.os.AsyncTask;
 
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.otto.Bus;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import ninja.stavola.friendcaster.event.FeedFinishEvent;
 import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.model.Rss.Item;
+import ninja.stavola.friendcaster.util.BusProvider;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 import retrofit.Call;
 import retrofit.Response;
@@ -19,10 +22,10 @@ import retrofit.http.GET;
 import retrofit.http.Query;
 
 public class FeedGetter {
-//    @Bind(R.id.progress_bar)
-//    public ProgressBar progressView;
-
     private FeedGetter() {
+        bus = BusProvider.getInstance().provideBus();
+        bus.register(this);
+
         OkHttpClient okHttpClient = new OkHttpClient();
 
         okHttpClient.setReadTimeout(2, TimeUnit.MINUTES);
@@ -38,9 +41,10 @@ public class FeedGetter {
         service = retrofit.create(SBFCService.class);
     }
 
-    public static FeedGetter INSTANCE;
-
+    private static FeedGetter INSTANCE;
     private final SBFCService service;
+
+    private Bus bus;
 
     public interface SBFCService {
         @GET("/")
@@ -48,8 +52,6 @@ public class FeedGetter {
     }
 
     public void fetchEpisodes(final FeedAdapter intoAdapter, Integer page) {
-        //progressView.setVisibility(View.VISIBLE);
-
         new AsyncTask<Integer, Void, List<Item>>() {
             @Override
             protected List<Item> doInBackground(Integer... params) {
@@ -66,10 +68,9 @@ public class FeedGetter {
 
             @Override
             protected void onPostExecute(List<Item> items) {
+                bus.post(new FeedFinishEvent());
                 intoAdapter.addAll(items);
                 intoAdapter.notifyDataSetChanged();
-
-                //progressView.setVisibility(View.GONE);
             }
         }.execute(page);
     }

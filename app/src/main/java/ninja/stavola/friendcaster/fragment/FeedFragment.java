@@ -8,8 +8,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.rey.material.widget.ProgressView;
+import com.squareup.otto.Subscribe;
+
 import butterknife.Bind;
 import ninja.stavola.friendcaster.R;
+import ninja.stavola.friendcaster.event.FeedFinishEvent;
 import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.util.DurationUtil;
 import ninja.stavola.friendcaster.util.EndlessScrollListener;
@@ -19,6 +23,9 @@ import ninja.stavola.friendcaster.util.retrofit.FeedGetter;
 public class FeedFragment extends BaseFragment {
     @Bind(R.id.view_feed_list)
     public ListView feedList;
+
+    @Bind(R.id.progress_bar)
+    public ProgressView progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,7 @@ public class FeedFragment extends BaseFragment {
     private void loadFeed(Integer page) {
         final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
 
+        progressBar.setVisibility(View.VISIBLE);
         FeedGetter.getInstance().fetchEpisodes(feedAdapter, page);
 
         //Since there is no duration returned by the RSS, we populate a holder in the model
@@ -80,5 +88,10 @@ public class FeedFragment extends BaseFragment {
                 return null;
             }
         }.execute();
+    }
+
+    @Subscribe
+    public void onFeedLoaded(FeedFinishEvent event) {
+        progressBar.setVisibility(View.GONE);
     }
 }

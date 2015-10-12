@@ -4,12 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    >
-    <ProgressBar
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.rey.material.widget.ProgressView
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
-        android:layout_height="13dp"
+        android:layout_height="14dp"
         android:visibility="gone"
+
+        app:pv_circular="false"
+        app:pv_progressStyle="@style/Material.Drawable.LinearProgress"
+        app:pv_progressMode="indeterminate"
         />
 
     <ListView
