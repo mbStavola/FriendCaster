@@ -7,12 +7,15 @@ import com.squareup.otto.Bus;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import ninja.stavola.friendcaster.dagger.FriendCasterComponent;
+import ninja.stavola.friendcaster.dagger.FriendCasterModule;
 import ninja.stavola.friendcaster.event.FeedFinishEvent;
 import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.model.Rss.Item;
-import ninja.stavola.friendcaster.util.BusProvider;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 import retrofit.Call;
 import retrofit.Response;
@@ -21,14 +24,14 @@ import retrofit.SimpleXmlConverterFactory;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
-public class FeedGetter {
-    private FeedGetter() {
-        bus = BusProvider.getInstance().provideBus();
+@Singleton
+public class PodcastAPI {
+    private Bus bus;
+
+    @Inject
+    protected PodcastAPI(Bus bus, OkHttpClient okHttpClient) {
+        this.bus = bus;
         bus.register(this);
-
-        OkHttpClient okHttpClient = new OkHttpClient();
-
-        okHttpClient.setReadTimeout(2, TimeUnit.MINUTES);
 
         String SBFC_URL = "http://superbestfriendsplay.com/";
 
@@ -41,10 +44,7 @@ public class FeedGetter {
         service = retrofit.create(SBFCService.class);
     }
 
-    private static FeedGetter INSTANCE;
     private final SBFCService service;
-
-    private Bus bus;
 
     public interface SBFCService {
         @GET("/")
@@ -73,12 +73,5 @@ public class FeedGetter {
                 intoAdapter.notifyDataSetChanged();
             }
         }.execute(page);
-    }
-
-    public static FeedGetter getInstance() {
-        if(INSTANCE == null) {
-            INSTANCE = new FeedGetter();
-        }
-        return INSTANCE;
     }
 }

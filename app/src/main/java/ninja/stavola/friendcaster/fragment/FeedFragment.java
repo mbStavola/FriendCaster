@@ -18,9 +18,11 @@ import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.util.DurationUtil;
 import ninja.stavola.friendcaster.util.EndlessScrollListener;
 import ninja.stavola.friendcaster.util.FeedAdapter;
-import ninja.stavola.friendcaster.util.retrofit.FeedGetter;
+import ninja.stavola.friendcaster.util.retrofit.PodcastAPI;
 
 public class FeedFragment extends BaseFragment {
+    private PodcastAPI podcastAPI;
+
     @Bind(R.id.view_feed_list)
     public ListView feedList;
 
@@ -36,6 +38,8 @@ public class FeedFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        podcastAPI = friendCasterComponent.podcastAPI();
 
         feedList.setAdapter(new FeedAdapter(getActivity(), 0));
         feedList.setOnScrollListener(new EndlessScrollListener() {
@@ -74,7 +78,7 @@ public class FeedFragment extends BaseFragment {
         final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
 
         progressBar.setVisibility(View.VISIBLE);
-        FeedGetter.getInstance().fetchEpisodes(feedAdapter, page);
+        podcastAPI.fetchEpisodes(feedAdapter, page);
 
         //Since there is no duration returned by the RSS, we populate a holder in the model
         //(with our own calculated duration) so we don't have to ever recalculate!

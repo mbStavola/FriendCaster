@@ -13,9 +13,12 @@ import com.squareup.otto.Bus;
 
 import butterknife.ButterKnife;
 import ninja.stavola.friendcaster.activity.MainActivity;
-import ninja.stavola.friendcaster.util.BusProvider;
+import ninja.stavola.friendcaster.dagger.DaggerFriendCasterComponent;
+import ninja.stavola.friendcaster.dagger.FriendCasterComponent;
+import ninja.stavola.friendcaster.dagger.FriendCasterModule;
 
 public abstract class BaseFragment extends Fragment {
+    protected FriendCasterComponent friendCasterComponent;
     protected Bus bus;
 
     public MainActivity getMainActivity() {
@@ -33,12 +36,17 @@ public abstract class BaseFragment extends Fragment {
         return inflater.inflate(getLayoutId(), container, false);
     }
 
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         ButterKnife.bind(this, view);
 
-        bus = BusProvider.getInstance().provideBus();
+       friendCasterComponent = DaggerFriendCasterComponent.builder()
+                .friendCasterModule(new FriendCasterModule())
+                .build();
+
+        bus = friendCasterComponent.provideBus();
         bus.register(this);
     }
 
