@@ -11,8 +11,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import ninja.stavola.friendcaster.dagger.FriendCasterComponent;
-import ninja.stavola.friendcaster.dagger.FriendCasterModule;
 import ninja.stavola.friendcaster.event.FeedFinishEvent;
 import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.model.Rss.Item;
