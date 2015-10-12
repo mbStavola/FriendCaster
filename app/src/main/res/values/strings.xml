@@ -8,6 +8,6 @@
     <string name="button_text_cast">Cast to Device</string>
     <string name="button_text_browser">Open in Browser</string>
     <string name="action_refresh">Refresh</string>
-    <string name="label_duration">Duration:</string>
-    <string name="label_date">Date:</string>
+    <string name="label_duration">Duration:\u0020</string>
+    <string name="label_date">Date:\u0020</string>
 </resources>
