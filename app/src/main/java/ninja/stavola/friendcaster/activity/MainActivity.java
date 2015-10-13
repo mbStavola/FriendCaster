@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,15 +30,17 @@ import ninja.stavola.friendcaster.util.EndlessScrollListener;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    private FriendCasterComponent friendCasterComponent;
     private PodcastAPI podcastAPI;
     private Bus bus;
 
+    @Bind(R.id.layout_swipe_refresh)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     @Bind(R.id.view_feed_list)
-    public ListView feedList;
+    ListView feedList;
 
     @Bind(R.id.progress_bar)
-    public ProgressView progressBar;
+    ProgressView progressBar;
 
     //TODO: Implement theme switching
     @Override
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        friendCasterComponent = DaggerFriendCasterComponent.builder()
+        FriendCasterComponent friendCasterComponent = DaggerFriendCasterComponent.builder()
                 .friendCasterModule(new FriendCasterModule())
                 .build();
 
@@ -58,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
         bus = friendCasterComponent.provideBus();
         bus.register(this);
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadFeed();
+            }
+        });
+        swipeRefreshLayout.setColorSchemeResources(R.color.dark_accent);
 
         feedList.setAdapter(new FeedAdapter(this, 0));
         feedList.setOnScrollListener(new EndlessScrollListener() {

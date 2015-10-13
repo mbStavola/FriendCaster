@@ -21,18 +21,24 @@
         app:pv_progressMode="indeterminate"
         />
 
-    <ListView
-        android:id="@+id/view_feed_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/layout_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        >
+        <ListView
+            android:id="@+id/view_feed_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
 
-        android:padding="@dimen/activity_margin"
-        android:clipToPadding="false"
+            android:padding="@dimen/activity_margin"
+            android:clipToPadding="false"
 
-        android:divider="@android:color/transparent"
-        android:dividerHeight="20dp"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="20dp"
 
-        android:scrollbarStyle="outsideOverlay"
-        android:listSelector="@android:color/transparent"
-        />
+            android:scrollbarStyle="outsideOverlay"
+            android:listSelector="@android:color/transparent"
+            />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
