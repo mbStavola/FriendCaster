@@ -1,11 +1,14 @@
 package ninja.stavola.friendcaster.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +21,7 @@ import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import ninja.stavola.friendcaster.R;
 import ninja.stavola.friendcaster.dagger.DaggerFriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterComponent;
@@ -26,29 +30,29 @@ import ninja.stavola.friendcaster.event.FeedFinishEvent;
 import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.retrofit.PodcastAPI;
 import ninja.stavola.friendcaster.util.DurationUtil;
-import ninja.stavola.friendcaster.util.EndlessScrollListener;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 
 public class MainActivity extends AppCompatActivity {
     private PodcastAPI podcastAPI;
     private Bus bus;
 
+    @Bind(R.id.toolbar)
+    protected Toolbar toolbar;
+
     @Bind(R.id.layout_swipe_refresh)
-    SwipeRefreshLayout swipeRefreshLayout;
+    protected SwipeRefreshLayout swipeRefreshLayout;
 
     @Bind(R.id.view_feed_list)
-    ListView feedList;
+    protected ListView feedList;
 
     @Bind(R.id.progress_bar)
-    ProgressView progressBar;
+    protected ProgressView progressBar;
 
     //TODO: Implement theme switching
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        setColorTheme(R.color.dark_accent, R.color.dark_status_bar);
 
         ButterKnife.bind(this);
 
@@ -61,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
         bus = friendCasterComponent.provideBus();
         bus.register(this);
 
+        toolbar.setTitle("FriendCaster");
+        setSupportActionBar(toolbar);
+
+        setColorTheme(R.color.dark_accent, R.color.dark_status_bar);
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -70,14 +79,6 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setColorSchemeResources(R.color.dark_accent);
 
         feedList.setAdapter(new FeedAdapter(this, 0));
-        feedList.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                //TODO: Page 2 produces an NPE (because they have no pagination!)
-                loadFeed(page);
-            }
-        });
-
         loadFeed();
     }
 
@@ -98,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setColorTheme(@ColorRes int actionBarColorId, @ColorRes int statusBarColorId) {
-        final int actionBarColor = getResources().getColor(actionBarColorId);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(actionBarColor));
+        final int toolbarColor = getResources().getColor(actionBarColorId);
+        toolbar.setBackground(new ColorDrawable(toolbarColor));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             final int statusBarColor =
@@ -109,10 +110,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.button_information)
+    public void loadInformation() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://github.com/mbStavola/FriendCaster"));
+        this.startActivity(intent);
+    }
+
     private void loadFeed() {
         loadFeed(0);
     }
 
+    //TODO: If/when they implement paging we'll actually use this method directly
     private void loadFeed(Integer page) {
         final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
 

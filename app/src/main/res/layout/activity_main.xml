@@ -9,6 +9,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
+    <include layout="@layout/toolbar" />
+
     <com.rey.material.widget.ProgressView
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
