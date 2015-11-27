@@ -27,15 +27,12 @@ import ninja.stavola.friendcaster.dagger.DaggerFriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterModule;
 import ninja.stavola.friendcaster.event.FeedFinishEvent;
-import ninja.stavola.friendcaster.model.Rss;
+import ninja.stavola.friendcaster.model.Rss.Item;
 import ninja.stavola.friendcaster.retrofit.PodcastAPI;
 import ninja.stavola.friendcaster.util.DurationUtil;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    private PodcastAPI podcastAPI;
-    private Bus bus;
-
     @Bind(R.id.toolbar)
     protected Toolbar toolbar;
 
@@ -45,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.view_feed_list)
     protected ListView feedList;
 
-    @Bind(R.id.progress_bar)
-    protected ProgressView progressBar;
+    private PodcastAPI podcastAPI;
+    private Bus bus;
 
     //TODO: Implement theme switching
     @Override
@@ -83,14 +80,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_main, menu);
-
-        return true;
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -98,7 +87,15 @@ public class MainActivity extends AppCompatActivity {
         bus.unregister(this);
     }
 
-    public void setColorTheme(@ColorRes int actionBarColorId, @ColorRes int statusBarColorId) {
+    @OnClick(R.id.button_information)
+    public void loadInformation() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://github.com/mbStavola/FriendCaster"));
+        this.startActivity(intent);
+    }
+
+    private void setColorTheme(@ColorRes int actionBarColorId, @ColorRes int statusBarColorId) {
         final int toolbarColor = getResources().getColor(actionBarColorId);
         toolbar.setBackground(new ColorDrawable(toolbarColor));
 
@@ -110,24 +107,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.button_information)
-    public void loadInformation() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("https://github.com/mbStavola/FriendCaster"));
-        this.startActivity(intent);
-    }
-
     private void loadFeed() {
         loadFeed(0);
     }
 
     //TODO: If/when they implement paging we'll actually use this method directly
     private void loadFeed(Integer page) {
-        final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
+        if(!swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
 
-        progressBar.setVisibility(View.VISIBLE);
-        podcastAPI.fetchEpisodes(feedAdapter, page);
+        podcastAPI.fetchEpisodes(page);
+    }
+
+    @Subscribe
+    public void onFeedLoaded(FeedFinishEvent event) {
+        final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
+        feedAdapter.addAll(event.items);
+        swipeRefreshLayout.setRefreshing(false);
 
         //Since there is no duration returned by the RSS, we populate a holder in the model
         //(with our own calculated duration) so we don't have to ever recalculate!
@@ -135,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected Void doInBackground(Void... params) {
                 for (int i = 0; i < feedAdapter.getCount(); i++) {
-                    Rss.Item item = feedAdapter.getItem(i);
+                    Item item = feedAdapter.getItem(i);
                     item.durationHolder = DurationUtil.getDuration(item.enclosure.url);
                 }
                 return null;
@@ -146,10 +143,5 @@ public class MainActivity extends AppCompatActivity {
                 feedAdapter.notifyDataSetChanged();
             }
         }.execute();
-    }
-
-    @Subscribe
-    public void onFeedLoaded(FeedFinishEvent event) {
-        progressBar.setVisibility(View.GONE);
     }
 }

@@ -50,26 +50,26 @@ public class PodcastAPI {
         Call<Rss> getEpisodes(@Query("feed") String feed, @Query("paged") Integer page);
     }
 
-    public void fetchEpisodes(final FeedAdapter intoAdapter, Integer page) {
+    public void fetchEpisodes(Integer page) {
         new AsyncTask<Integer, Void, List<Item>>() {
             @Override
             protected List<Item> doInBackground(Integer... params) {
                 Call<Rss> call = service.getEpisodes("podcast", params[0]);
                 Response<Rss>  response = null;
+
                 try {
                     response = call.execute();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
                 Rss rss = response.body();
                 return rss.channel.item;
             }
 
             @Override
             protected void onPostExecute(List<Item> items) {
-                bus.post(new FeedFinishEvent());
-                intoAdapter.addAll(items);
-                intoAdapter.notifyDataSetChanged();
+                bus.post(new FeedFinishEvent(items));
             }
         }.execute(page);
     }
