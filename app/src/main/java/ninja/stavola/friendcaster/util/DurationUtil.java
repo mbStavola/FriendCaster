@@ -26,7 +26,6 @@ public class DurationUtil {
             e.printStackTrace();
         }
 
-        mediaPlayer.
         float lengthInSeconds = mediaPlayer.getDuration() / 1000;
         mediaPlayer.release();
 

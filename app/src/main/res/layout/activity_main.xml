@@ -9,19 +9,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
+
     <include layout="@layout/toolbar" />
-
-    <com.rey.material.widget.ProgressView
-        android:id="@+id/progress_bar"
-        android:layout_width="match_parent"
-        android:layout_height="14dp"
-
-        android:visibility="gone"
-
-        app:pv_circular="false"
-        app:pv_progressStyle="@style/Material.Drawable.LinearProgress"
-        app:pv_progressMode="indeterminate"
-        />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/layout_swipe_refresh"
