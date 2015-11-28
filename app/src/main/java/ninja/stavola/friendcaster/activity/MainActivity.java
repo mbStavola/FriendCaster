@@ -1,6 +1,7 @@
 package ninja.stavola.friendcaster.activity;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -8,8 +9,10 @@ import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.ListView;
+import android.view.View;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -18,12 +21,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ninja.stavola.friendcaster.R;
+import ninja.stavola.friendcaster.adapter.FeedRecyclerAdapter;
 import ninja.stavola.friendcaster.dagger.DaggerFriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterModule;
 import ninja.stavola.friendcaster.event.FeedFinishEvent;
 import ninja.stavola.friendcaster.retrofit.PodcastAPI;
-import ninja.stavola.friendcaster.util.FeedAdapter;
 
 public class MainActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
@@ -33,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     protected SwipeRefreshLayout swipeRefreshLayout;
 
     @Bind(R.id.view_feed_list)
-    protected ListView feedList;
+    protected RecyclerView feedList;
 
     private PodcastAPI podcastAPI;
     private Bus bus;
@@ -68,7 +71,18 @@ public class MainActivity extends AppCompatActivity {
         });
         swipeRefreshLayout.setColorSchemeResources(R.color.dark_accent);
 
-        feedList.setAdapter(new FeedAdapter(this, 0));
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        feedList.setLayoutManager(layoutManager);
+        feedList.setAdapter(new FeedRecyclerAdapter());
+        feedList.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
+                    outRect.bottom = 35;
+                }
+            }
+        });
+
         loadFeed();
     }
 
@@ -101,10 +115,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadFeed() {
+        final FeedRecyclerAdapter feedAdapter = (FeedRecyclerAdapter) feedList.getAdapter();
+        feedAdapter.clear();
         loadFeed(0);
     }
 
-    //TODO: If/when they implement paging we'll actually use this method directly
     private void loadFeed(Integer page) {
         if(!swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(true);
@@ -115,8 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe
     public void onFeedLoaded(FeedFinishEvent event) {
-        final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
-        feedAdapter.clear();
+        final FeedRecyclerAdapter feedAdapter = (FeedRecyclerAdapter) feedList.getAdapter();
         feedAdapter.addAll(event.items);
         swipeRefreshLayout.setRefreshing(false);
     }
