@@ -8,14 +8,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
+import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
-import com.rey.material.widget.ProgressView;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -123,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onFeedLoaded(FeedFinishEvent event) {
         final FeedAdapter feedAdapter = (FeedAdapter) feedList.getAdapter();
+        feedAdapter.clear();
         feedAdapter.addAll(event.items);
         swipeRefreshLayout.setRefreshing(false);
 

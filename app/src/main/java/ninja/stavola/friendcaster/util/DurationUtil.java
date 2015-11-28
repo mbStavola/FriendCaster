@@ -2,7 +2,6 @@ package ninja.stavola.friendcaster.util;
 
 import android.media.MediaPlayer;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 
 import org.joda.time.Period;
 import org.joda.time.Seconds;
@@ -10,10 +9,6 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Arrays;
 
 public class DurationUtil {
     @WorkerThread

@@ -1,7 +1,6 @@
 package ninja.stavola.friendcaster.retrofit;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.otto.Bus;
@@ -15,7 +14,6 @@ import javax.inject.Singleton;
 import ninja.stavola.friendcaster.event.FeedFinishEvent;
 import ninja.stavola.friendcaster.model.Rss;
 import ninja.stavola.friendcaster.model.Rss.Item;
-import ninja.stavola.friendcaster.util.FeedAdapter;
 import retrofit.Call;
 import retrofit.Response;
 import retrofit.Retrofit;
