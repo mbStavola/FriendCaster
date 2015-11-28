@@ -7,6 +7,6 @@
     <string name="button_text_download">Download to Device</string>
     <string name="button_text_cast">Cast to Device</string>
     <string name="button_text_browser">Open in Browser</string>
-    <string name="label_duration">Duration:\u0020</string>
-    <string name="label_date">Date:\u0020</string>
+    <string name="label_duration">Duration:\u0020%s</string>
+    <string name="label_date">Date:\u0020%s</string>
 </resources>

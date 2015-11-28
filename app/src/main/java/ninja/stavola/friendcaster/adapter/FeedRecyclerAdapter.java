@@ -50,8 +50,11 @@ public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Item, EpisodeViewH
         holder.episodeTitle.setText(content.title);
 
         //Convert time info to something easier to read
-        holder.episodeLength.setText(getFormattedDuration(content.duration));
-        holder.episodeDate.setText(getLocalDateTimeString(new Date(content.pubDate)));
+        String durationString = context.getString(R.string.label_duration, getFormattedDuration(content.duration));
+        holder.episodeLength.setText(durationString);
+
+        String dateString = context.getString(R.string.label_date, getLocalDateTimeString(content.pubDate));
+        holder.episodeDate.setText(dateString);
 
         //Note: This stuff feels kinda dirty
         BottomSheetViewHolder bottomSheetViewHolder = new BottomSheetViewHolder(holder.dialogView, context);
@@ -65,9 +68,9 @@ public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Item, EpisodeViewH
         bottomSheetViewHolder.linkToEpisode = content.link;
     }
 
-    private String getLocalDateTimeString(Date date) {
+    private String getLocalDateTimeString(String date) {
         LocalDateTime localDateTime =
-                new LocalDateTime(date, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+                new LocalDateTime(new Date(date), DateTimeZone.forTimeZone(TimeZone.getDefault()));
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("M/dd/yy");
 
