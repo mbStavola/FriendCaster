@@ -12,12 +12,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import ninja.stavola.friendcaster.event.FeedFinishEvent;
-import ninja.stavola.friendcaster.model.Rss;
-import ninja.stavola.friendcaster.model.Rss.Item;
+import ninja.stavola.friendcaster.model.Feed;
+import ninja.stavola.friendcaster.model.Feed.Wrapper.Episode.Item;
 import retrofit.Call;
+import retrofit.MoshiConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
-import retrofit.SimpleXmlConverterFactory;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
@@ -30,11 +30,11 @@ public class PodcastAPI {
         this.bus = bus;
         bus.register(this);
 
-        String SBFC_URL = "http://superbestfriendsplay.com/";
+        String SBFC_URL = "https://friendcaster-server.herokuapp.com/";
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(SBFC_URL)
-                .addConverterFactory(SimpleXmlConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create())
                 .client(okHttpClient)
                 .build();
 
@@ -44,16 +44,16 @@ public class PodcastAPI {
     private final SBFCService service;
 
     public interface SBFCService {
-        @GET("/")
-        Call<Rss> getEpisodes(@Query("feed") String feed, @Query("paged") Integer page);
+        @GET("/episodes")
+        Call<Feed> getEpisodes(@Query("page") Integer page);
     }
 
     public void fetchEpisodes(Integer page) {
         new AsyncTask<Integer, Void, List<Item>>() {
             @Override
             protected List<Item> doInBackground(Integer... params) {
-                Call<Rss> call = service.getEpisodes("podcast", params[0]);
-                Response<Rss>  response = null;
+                Call<Feed> call = service.getEpisodes(params[0]);
+                Response<Feed> response = null;
 
                 try {
                     response = call.execute();
@@ -61,8 +61,8 @@ public class PodcastAPI {
                     e.printStackTrace();
                 }
 
-                Rss rss = response.body();
-                return rss.channel.item;
+                Feed feed = response.body();
+                return feed.map.episodes.myArrayList;
             }
 
             @Override

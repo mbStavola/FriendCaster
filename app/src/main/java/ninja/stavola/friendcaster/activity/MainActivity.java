@@ -3,7 +3,6 @@ package ninja.stavola.friendcaster.activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -23,9 +22,7 @@ import ninja.stavola.friendcaster.dagger.DaggerFriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterModule;
 import ninja.stavola.friendcaster.event.FeedFinishEvent;
-import ninja.stavola.friendcaster.model.Rss.Item;
 import ninja.stavola.friendcaster.retrofit.PodcastAPI;
-import ninja.stavola.friendcaster.util.DurationUtil;
 import ninja.stavola.friendcaster.util.FeedAdapter;
 
 public class MainActivity extends AppCompatActivity {
@@ -122,23 +119,5 @@ public class MainActivity extends AppCompatActivity {
         feedAdapter.clear();
         feedAdapter.addAll(event.items);
         swipeRefreshLayout.setRefreshing(false);
-
-        //Since there is no duration returned by the RSS, we populate a holder in the model
-        //(with our own calculated duration) so we don't have to ever recalculate!
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                for (int i = 0; i < feedAdapter.getCount(); i++) {
-                    Item item = feedAdapter.getItem(i);
-                    item.durationHolder = DurationUtil.getDuration(item.enclosure.url);
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                feedAdapter.notifyDataSetChanged();
-            }
-        }.execute();
     }
 }

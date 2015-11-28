@@ -16,8 +16,12 @@ import com.rey.material.app.BottomSheetDialog;
 
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
+import org.joda.time.Period;
+import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.util.Date;
 import java.util.TimeZone;
@@ -26,7 +30,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ninja.stavola.friendcaster.R;
-import ninja.stavola.friendcaster.model.Rss.Item;
+import ninja.stavola.friendcaster.model.Feed.Wrapper.Episode.Item;
+import ninja.stavola.friendcaster.model.Feed.Wrapper.Episode.Item.Content;
 import ninja.stavola.friendcaster.view.BottomSheetButtonView;
 
 public class FeedAdapter extends ArrayAdapter<Item> {
@@ -49,26 +54,20 @@ public class FeedAdapter extends ArrayAdapter<Item> {
             view.setTag(episodeHolder);
         }
 
-        final Item item = getItem(position);
+        final Content item = getItem(position).map;
 
         //Format for the entry title is "SBFC <Episode Number>: <Episode Title>"
-        episodeHolder.episodeTitle.setText(item.title.substring(5));
-        episodeHolder.fileName = item.title.substring(0, item.title.indexOf(':')).replace(" ", "_") + ".mp3";
+        String title = item.title;
+        episodeHolder.episodeTitle.setText(title.substring(5));
+        episodeHolder.fileName = title.substring(0, title.indexOf(':')).replace(" ", "_") + ".mp3";
 
         episodeHolder.episodeDate.setText(getLocalDateTimeString(new Date(item.pubDate)));
 
         //Get the media file for the entry
-        episodeHolder.episodeMediaFileUrl = item.enclosure.url;
-        episodeHolder.episodeMediaMime = item.enclosure.type;
+        episodeHolder.episodeMediaFileUrl = item.enclosure.map.url;
+        episodeHolder.episodeMediaMime = item.enclosure.map.type;
 
-        final String durationString;
-        if(item.durationHolder == null) {
-            durationString = "Loading...";
-        } else {
-            durationString = item.durationHolder;
-        }
-
-        episodeHolder.episodeLength.setText(durationString);
+        episodeHolder.episodeLength.setText(getDurationFromSeconds(item.duration));
 
         episodeHolder.linkToEpisode = item.link;
 
@@ -82,6 +81,22 @@ public class FeedAdapter extends ArrayAdapter<Item> {
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("M/dd/yy");
 
         return localDateTime.toString(dateTimeFormatter);
+    }
+
+    private String getDurationFromSeconds(int seconds) {
+        Period period = new Period(Seconds.seconds(seconds));
+
+        PeriodFormatter periodFormatter = new PeriodFormatterBuilder()
+                .printZeroAlways()
+                .minimumPrintedDigits(2)
+                .appendHours()
+                .appendSeparator(":")
+                .appendMinutes()
+                .appendSeparator(":")
+                .appendSeconds()
+                .toFormatter();
+
+        return periodFormatter.print(period.normalizedStandard());
     }
 
     public static class EpisodeViewHolder {
