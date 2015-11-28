@@ -27,7 +27,6 @@ import ninja.stavola.friendcaster.view.holder.EpisodeViewHolder;
 
 public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Item, EpisodeViewHolder> {
     private Context context;
-    private View bottomSheetView;
 
     @Override
     public EpisodeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -38,9 +37,9 @@ public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Item, EpisodeViewH
         View v = LayoutInflater.from(context).inflate(R.layout.card_episode, parent, false);
 
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.Material_App_BottomSheetDialog);
-        bottomSheetView = LayoutInflater.from(context).inflate(R.layout.view_bottom_sheet, null);
+        View bottomSheetView = LayoutInflater.from(context).inflate(R.layout.view_bottom_sheet, null);
 
-        return new EpisodeViewHolder(v, bottomSheetDialog.contentView(bottomSheetView));
+        return new EpisodeViewHolder(v, bottomSheetView, bottomSheetDialog);
     }
 
     @Override
@@ -54,7 +53,8 @@ public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Item, EpisodeViewH
         holder.episodeLength.setText(getFormattedDuration(content.duration));
         holder.episodeDate.setText(getLocalDateTimeString(new Date(content.pubDate)));
 
-        BottomSheetViewHolder bottomSheetViewHolder = new BottomSheetViewHolder(bottomSheetView, context);
+        //Note: This stuff feels kinda dirty
+        BottomSheetViewHolder bottomSheetViewHolder = new BottomSheetViewHolder(holder.dialogView, context);
 
         //Get the media file for the entry
         bottomSheetViewHolder.episodeMediaFileUrl = content.enclosure.map.url;
