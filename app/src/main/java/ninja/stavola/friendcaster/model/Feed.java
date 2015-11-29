@@ -1,44 +1,19 @@
 package ninja.stavola.friendcaster.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
 public class Feed {
-    public Wrapper map;
+    public boolean hasNext;
+    public List<Episode> episodeList = new ArrayList<>();
 
-    public static class Wrapper {
-        public boolean hasNext;
-
-        public Episode episodes;
-
-        public static class Episode {
-            public List<Item> myArrayList;
-
-            public static class Item {
-                public Content map;
-
-                public static class Content {
-                    public String link;
-
-                    public String title;
-
-                    public String pubDate;
-
-                    public int duration;
-
-                    public Enclosure enclosure;
-
-                    public static class Enclosure {
-                        public File map;
-
-                        public static class File {
-                            public String url;
-
-                            public String type;
-                        }
-                    }
-                }
-            }
-        }
+    public static class Episode {
+        public String episodeLink;
+        public String title;
+        public String date;
+        public long duration;
+        public String mp3Link;
+        public String mimeType;
     }
 }

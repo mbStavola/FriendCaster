@@ -20,12 +20,11 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import ninja.stavola.friendcaster.R;
-import ninja.stavola.friendcaster.model.Feed.Wrapper.Episode.Item;
-import ninja.stavola.friendcaster.model.Feed.Wrapper.Episode.Item.Content;
+import ninja.stavola.friendcaster.model.Feed.Episode;
 import ninja.stavola.friendcaster.view.holder.BottomSheetViewHolder;
 import ninja.stavola.friendcaster.view.holder.EpisodeViewHolder;
 
-public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Item, EpisodeViewHolder> {
+public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Episode, EpisodeViewHolder> {
     private Context context;
 
     @Override
@@ -44,28 +43,28 @@ public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Item, EpisodeViewH
 
     @Override
     public void onBindViewHolder(EpisodeViewHolder holder, int position) {
-        Content content = getElement(position).map;
+        Episode episode = getElement(position);
 
         //Format for the entry title is "SBFC <Episode Number>: <Episode Title>"
-        holder.episodeTitle.setText(content.title);
+        holder.episodeTitle.setText(episode.title);
 
         //Convert time info to something easier to read
-        String durationString = context.getString(R.string.label_duration, getFormattedDuration(content.duration));
+        String durationString = context.getString(R.string.label_duration, getFormattedDuration((int) episode.duration));
         holder.episodeLength.setText(durationString);
 
-        String dateString = context.getString(R.string.label_date, getLocalDateTimeString(content.pubDate));
+        String dateString = context.getString(R.string.label_date, getLocalDateTimeString(episode.date));
         holder.episodeDate.setText(dateString);
 
         //Note: This stuff feels kinda dirty
         BottomSheetViewHolder bottomSheetViewHolder = new BottomSheetViewHolder(holder.dialogView, context);
 
         //Get the media file for the entry
-        bottomSheetViewHolder.episodeMediaFileUrl = content.enclosure.map.url;
-        bottomSheetViewHolder.episodeMediaMime = content.enclosure.map.type;
+        bottomSheetViewHolder.episodeMediaFileUrl = episode.mp3Link;
+        bottomSheetViewHolder.episodeMediaMime = episode.mimeType;
 
-        bottomSheetViewHolder.fileName = content.title.substring(0, content.title.indexOf(':')).replace(" ", "_") + ".mp3";
+        bottomSheetViewHolder.fileName = episode.title.substring(0, episode.title.indexOf(':')).replace(" ", "_") + ".mp3";
 
-        bottomSheetViewHolder.linkToEpisode = content.link;
+        bottomSheetViewHolder.linkToEpisode = episode.episodeLink;
     }
 
     private String getLocalDateTimeString(String date) {

@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 
 import ninja.stavola.friendcaster.event.FeedFinishEvent;
 import ninja.stavola.friendcaster.model.Feed;
-import ninja.stavola.friendcaster.model.Feed.Wrapper.Episode.Item;
+import ninja.stavola.friendcaster.model.Feed.Episode;
 import retrofit.Call;
 import retrofit.MoshiConverterFactory;
 import retrofit.Response;
@@ -49,9 +49,9 @@ public class PodcastAPI {
     }
 
     public void fetchEpisodes(Integer page) {
-        new AsyncTask<Integer, Void, List<Item>>() {
+        new AsyncTask<Integer, Void, List<Episode>>() {
             @Override
-            protected List<Item> doInBackground(Integer... params) {
+            protected List<Episode> doInBackground(Integer... params) {
                 Call<Feed> call = service.getEpisodes(params[0]);
                 Response<Feed> response = null;
 
@@ -62,11 +62,11 @@ public class PodcastAPI {
                 }
 
                 Feed feed = response.body();
-                return feed.map.episodes.myArrayList;
+                return feed.episodeList;
             }
 
             @Override
-            protected void onPostExecute(List<Item> items) {
+            protected void onPostExecute(List<Episode> items) {
                 bus.post(new FeedFinishEvent(items));
             }
         }.execute(page);

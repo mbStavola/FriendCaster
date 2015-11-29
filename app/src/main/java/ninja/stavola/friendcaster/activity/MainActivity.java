@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onFeedLoaded(FeedFinishEvent event) {
         final FeedRecyclerAdapter feedAdapter = (FeedRecyclerAdapter) feedList.getAdapter();
-        feedAdapter.addAll(event.items);
+        feedAdapter.addAll(event.episodes);
         swipeRefreshLayout.setRefreshing(false);
     }
 }

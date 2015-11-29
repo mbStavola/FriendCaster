@@ -2,12 +2,12 @@ package ninja.stavola.friendcaster.event;
 
 import java.util.List;
 
-import ninja.stavola.friendcaster.model.Feed.Wrapper.Episode.Item;
+import ninja.stavola.friendcaster.model.Feed.Episode;
 
 public class FeedFinishEvent {
-    public List<Item> items;
+    public List<Episode> episodes;
 
-    public FeedFinishEvent(List<Item> items) {
-        this.items = items;
+    public FeedFinishEvent(List<Episode> episodes) {
+        this.episodes = episodes;
     }
 }
