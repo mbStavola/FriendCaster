@@ -49,9 +49,9 @@ public class PodcastAPI {
     }
 
     public void fetchEpisodes(Integer page) {
-        new AsyncTask<Integer, Void, List<Episode>>() {
+        new AsyncTask<Integer, Void, Feed>() {
             @Override
-            protected List<Episode> doInBackground(Integer... params) {
+            protected Feed doInBackground(Integer... params) {
                 Call<Feed> call = service.getEpisodes(params[0]);
                 Response<Feed> response = null;
 
@@ -62,12 +62,12 @@ public class PodcastAPI {
                 }
 
                 Feed feed = response.body();
-                return feed.episodeList;
+                return feed;
             }
 
             @Override
-            protected void onPostExecute(List<Episode> items) {
-                bus.post(new FeedFinishEvent(items));
+            protected void onPostExecute(Feed feed) {
+                bus.post(new FeedFinishEvent(feed));
             }
         }.execute(page);
     }

@@ -41,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private PodcastAPI podcastAPI;
     private Bus bus;
 
+    private boolean hasNext;
+    private Integer currentPage = 0;
+
     //TODO: Implement theme switching
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,24 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        feedList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(dy > 0) {
+                    int totalItemCount = layoutManager.getItemCount();
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    boolean isAtBottom = (visibleItemCount + firstVisibleItemPosition) >= totalItemCount;
+
+                    if(hasNext && isAtBottom) {
+                        hasNext = false;
+                        currentPage++;
+                        loadFeed(currentPage);
+                    }
+                }
+            }
+        });
 
         loadFeed();
     }
@@ -117,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadFeed() {
         final FeedRecyclerAdapter feedAdapter = (FeedRecyclerAdapter) feedList.getAdapter();
         feedAdapter.clear();
+        currentPage = 0;
         loadFeed(0);
     }
 
@@ -133,5 +155,7 @@ public class MainActivity extends AppCompatActivity {
         final FeedRecyclerAdapter feedAdapter = (FeedRecyclerAdapter) feedList.getAdapter();
         feedAdapter.addAll(event.episodes);
         swipeRefreshLayout.setRefreshing(false);
+
+        hasNext = event.hasNext;
     }
 }
