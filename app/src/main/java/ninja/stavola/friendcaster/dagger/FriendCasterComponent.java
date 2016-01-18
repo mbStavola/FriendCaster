@@ -1,17 +1,14 @@
 package ninja.stavola.friendcaster.dagger;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.otto.Bus;
-
 import javax.inject.Singleton;
 
 import dagger.Component;
 import ninja.stavola.friendcaster.retrofit.PodcastAPI;
+import okhttp3.OkHttpClient;
 
 @Singleton
 @Component(modules = { FriendCasterModule.class })
 public interface FriendCasterComponent {
-    Bus provideBus();
     OkHttpClient okHttpClient();
     PodcastAPI podcastAPI();
 }

@@ -14,9 +14,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -25,8 +22,12 @@ import ninja.stavola.friendcaster.adapter.FeedRecyclerAdapter;
 import ninja.stavola.friendcaster.dagger.DaggerFriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterComponent;
 import ninja.stavola.friendcaster.dagger.FriendCasterModule;
-import ninja.stavola.friendcaster.event.FeedFinishEvent;
+import ninja.stavola.friendcaster.model.Feed;
 import ninja.stavola.friendcaster.retrofit.PodcastAPI;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
@@ -39,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     protected RecyclerView feedList;
 
     private PodcastAPI podcastAPI;
-    private Bus bus;
 
     private boolean hasNext;
     private Integer currentPage = 0;
@@ -52,14 +52,11 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        FriendCasterComponent friendCasterComponent = DaggerFriendCasterComponent.builder()
+        final FriendCasterComponent friendCasterComponent = DaggerFriendCasterComponent.builder()
                 .friendCasterModule(new FriendCasterModule())
                 .build();
 
         podcastAPI = friendCasterComponent.podcastAPI();
-
-        bus = friendCasterComponent.provideBus();
-        bus.register(this);
 
         toolbar.setTitle("FriendCaster");
         setSupportActionBar(toolbar);
@@ -74,35 +71,7 @@ public class MainActivity extends AppCompatActivity {
         });
         swipeRefreshLayout.setColorSchemeResources(R.color.dark_accent);
 
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        feedList.setLayoutManager(layoutManager);
-        feedList.setAdapter(new FeedRecyclerAdapter());
-        feedList.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
-                    outRect.bottom = 35;
-                }
-            }
-        });
-        feedList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if(dy > 0) {
-                    int totalItemCount = layoutManager.getItemCount();
-                    int visibleItemCount = layoutManager.getChildCount();
-                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-
-                    boolean isAtBottom = (visibleItemCount + firstVisibleItemPosition) >= totalItemCount;
-
-                    if(hasNext && isAtBottom) {
-                        hasNext = false;
-                        currentPage++;
-                        loadFeed(currentPage);
-                    }
-                }
-            }
-        });
+        decorateFeedList();
 
         loadFeed();
     }
@@ -112,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         ButterKnife.unbind(this);
-        bus.unregister(this);
     }
 
     @OnClick(R.id.button_information)
@@ -142,20 +110,68 @@ public class MainActivity extends AppCompatActivity {
         loadFeed(0);
     }
 
-    private void loadFeed(Integer page) {
+    private void loadFeed(final Integer page) {
         if(!swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(true);
         }
 
-        podcastAPI.fetchEpisodes(page);
+        Observable<Feed> feedObservable = podcastAPI.getEpisodes(page);
+
+        feedObservable.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Feed>() {
+                    @Override
+                    public void onCompleted() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Feed feed) {
+                        final FeedRecyclerAdapter feedAdapter = (FeedRecyclerAdapter) feedList.getAdapter();
+                        feedAdapter.addAll(feed.episodeList);
+
+                        hasNext = feed.hasNext;
+                    }
+                });
     }
 
-    @Subscribe
-    public void onFeedLoaded(FeedFinishEvent event) {
-        final FeedRecyclerAdapter feedAdapter = (FeedRecyclerAdapter) feedList.getAdapter();
-        feedAdapter.addAll(event.episodes);
-        swipeRefreshLayout.setRefreshing(false);
+    private void decorateFeedList() {
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
-        hasNext = event.hasNext;
+        feedList.setLayoutManager(layoutManager);
+        feedList.setAdapter(new FeedRecyclerAdapter());
+
+        feedList.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
+                    outRect.bottom = 35;
+                }
+            }
+        });
+
+        feedList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if(dy > 0) {
+                    int totalItemCount = layoutManager.getItemCount();
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                    boolean isAtBottom = (visibleItemCount + firstVisibleItemPosition) >= totalItemCount;
+
+                    if(hasNext && isAtBottom) {
+                        hasNext = false;
+                        currentPage++;
+                        loadFeed(currentPage);
+                    }
+                }
+            }
+        });
     }
 }
