@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rey.material.app.BottomSheetDialog;
-
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
@@ -35,10 +33,7 @@ public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Episode, EpisodeVi
 
         View v = LayoutInflater.from(context).inflate(R.layout.card_episode, parent, false);
 
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context, R.style.Material_App_BottomSheetDialog);
-        View bottomSheetView = LayoutInflater.from(context).inflate(R.layout.view_bottom_sheet, null);
-
-        return new EpisodeViewHolder(v, bottomSheetView, bottomSheetDialog);
+        return new EpisodeViewHolder(v, context);
     }
 
     @Override
@@ -49,14 +44,22 @@ public class FeedRecyclerAdapter extends ArrayRecyclerAdapter<Episode, EpisodeVi
         holder.episodeTitle.setText(episode.title);
 
         //Convert time info to something easier to read
-        String durationString = context.getString(R.string.label_duration, getFormattedDuration((int) episode.duration));
+        long duration = episode.duration;
+
+        String durationString;
+        if(duration > 0) {
+            durationString = context.getString(R.string.label_duration, getFormattedDuration((int) duration));
+        } else {
+            durationString = context.getString(R.string.label_duration_unknown);
+        }
+
         holder.episodeLength.setText(durationString);
 
         String dateString = context.getString(R.string.label_date, getLocalDateTimeString(episode.date));
         holder.episodeDate.setText(dateString);
 
         //Note: This stuff feels kinda dirty
-        BottomSheetViewHolder bottomSheetViewHolder = new BottomSheetViewHolder(holder.dialogView, context);
+        BottomSheetViewHolder bottomSheetViewHolder = new BottomSheetViewHolder(holder.bottomSheetView, context);
 
         //Get the media file for the entry
         bottomSheetViewHolder.episodeMediaFileUrl = episode.mp3Link;

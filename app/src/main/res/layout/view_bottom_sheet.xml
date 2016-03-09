@@ -22,12 +22,12 @@
         custom:image="@drawable/ic_file_download_white_24dp"
         />
 
-    <ninja.stavola.friendcaster.view.BottomSheetButtonView
-        android:id="@+id/button_cast"
-        style="@style/BottomSheetButtonStyle"
-        custom:text="@string/button_text_cast"
-        custom:image="@drawable/ic_cast_white_24dp"
-        />
+    <!--<ninja.stavola.friendcaster.view.BottomSheetButtonView-->
+        <!--android:id="@+id/button_cast"-->
+        <!--style="@style/BottomSheetButtonStyle"-->
+        <!--custom:text="@string/button_text_cast"-->
+        <!--custom:image="@drawable/ic_cast_white_24dp"-->
+        <!--/>-->
 
     <ninja.stavola.friendcaster.view.BottomSheetButtonView
         android:id="@+id/button_browser"

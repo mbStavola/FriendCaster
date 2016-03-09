@@ -8,5 +8,6 @@
     <string name="button_text_cast">Cast to Device</string>
     <string name="button_text_browser">Open in Browser</string>
     <string name="label_duration">Duration:\u0020%s</string>
+    <string name="label_duration_unknown">Duration:\u0020Unknown</string>
     <string name="label_date">Date:\u0020%s</string>
 </resources>

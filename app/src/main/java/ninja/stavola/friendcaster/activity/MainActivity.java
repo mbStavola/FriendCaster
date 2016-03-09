@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import butterknife.Bind;
@@ -111,23 +112,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadFeed(final Integer page) {
-        if(!swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(true);
-        }
+        setRefreshing(true);
 
         Observable<Feed> feedObservable = podcastAPI.getEpisodes(page);
 
-        feedObservable.subscribeOn(Schedulers.newThread())
+        feedObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Feed>() {
                     @Override
                     public void onCompleted() {
-                        swipeRefreshLayout.setRefreshing(false);
+                        setRefreshing(false);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.e("Friendcaster", e.getLocalizedMessage());
+                        setRefreshing(false);
                     }
 
                     @Override
@@ -173,5 +173,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void setRefreshing(boolean shouldRefresh) {
+        if (swipeRefreshLayout == null) {
+            return;
+        }
+
+        if (shouldRefresh ^ swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(shouldRefresh);
+        }
     }
 }
